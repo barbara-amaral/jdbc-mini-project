@@ -126,14 +126,7 @@ public class BookDaoImpl implements BookDao{
             resultSet = preparedStatement.executeQuery();
 
             if (resultSet.next()) {
-                Book book = new Book();
-                book.setTitle(resultSet.getString("title"));
-                book.setId(resultSet.getLong("id"));
-                book.setIsbn(resultSet.getString("isbn"));
-                book.setPublisher(resultSet.getString("publisher"));
-                book.setAuthor(authorDao.getById(resultSet.getLong("author_id")));
-
-                return book;
+                return getBookFromResultSet(resultSet);
             }
 
         } catch (SQLException e) {
