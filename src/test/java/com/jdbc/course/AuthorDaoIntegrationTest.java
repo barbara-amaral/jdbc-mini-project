@@ -7,9 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.test.context.ActiveProfiles;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ActiveProfiles("local")
 @DataJpaTest
@@ -22,7 +24,7 @@ public class AuthorDaoIntegrationTest {
 
     @Test
     void testGetAuthorById() {
-        Author author = authorDao.getById(1L);
+        Author author = authorDao.getById(2L);
 
         assertThat(author).isNotNull();
 
@@ -38,7 +40,7 @@ public class AuthorDaoIntegrationTest {
     void saveAuthor() {
         Author author = new Author();
         author.setFirstName("Marcos");
-        author.setLastName("Machado");
+        author.setLastName("T222");
         Author saved = authorDao.saveNewAuthor(author);
         assertThat(saved).isNotNull();
 
@@ -69,7 +71,9 @@ public class AuthorDaoIntegrationTest {
 
         authorDao.deleteAuthorById(saved.getId());
 
-        Author deleted = authorDao.getById(saved.getId());
-        assertThat(deleted).isNull();
+        assertThrows(EmptyResultDataAccessException.class, () -> {
+            Author deleted = authorDao.getById(saved.getId());
+        });
+
     }
 }

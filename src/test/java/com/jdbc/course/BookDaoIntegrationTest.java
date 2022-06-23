@@ -8,9 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.test.context.ActiveProfiles;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ActiveProfiles("local")
 @DataJpaTest
@@ -27,11 +29,7 @@ public class BookDaoIntegrationTest {
         book.setTitle("Twilight");
         book.setIsbn("09987");
         book.setPublisher("Something");
-
-        Author author = new Author();
-        author.setId(1L);
-
-        book.setAuthor(author);
+        book.setAuthor(1L);
 
         Book saved = bookDao.saveNewBook(book);
         assertThat(saved).isNotNull();
@@ -44,11 +42,7 @@ public class BookDaoIntegrationTest {
         book.setTitle("Twilight");
         book.setIsbn("09987");
         book.setPublisher("Something");
-
-        Author author = new Author();
-        author.setId(1L);
-
-        book.setAuthor(author);
+        book.setAuthor(1L);
 
         Book saved = bookDao.saveNewBook(book);
 
@@ -67,8 +61,9 @@ public class BookDaoIntegrationTest {
 
         bookDao.deleteBookById(saved.getId());
 
-        Book deleted = bookDao.getById(saved.getId());
-        assertThat(deleted).isNull();
+        assertThrows(EmptyResultDataAccessException.class, () -> {
+            bookDao.getById(saved.getId());
+        });
     }
 
     @Test
@@ -77,11 +72,7 @@ public class BookDaoIntegrationTest {
         book.setTitle("Twilight");
         book.setIsbn("09987");
         book.setPublisher("Something");
-
-        Author author = new Author();
-        author.setId(1L);
-
-        book.setAuthor(author);
+        book.setAuthor(1L);
 
         Book saved = bookDao.saveNewBook(book);
 
@@ -95,14 +86,10 @@ public class BookDaoIntegrationTest {
     void findBookByTitle() {
 
         Book book = new Book();
-        book.setTitle("All about java");
-        book.setIsbn("0998700");
+        book.setTitle("All about java 22");
+        book.setIsbn("09987008");
         book.setPublisher("Something");
-
-        Author author = new Author();
-        author.setId(2L);
-
-        book.setAuthor(author);
+        book.setAuthor(1L);
 
         Book saved = bookDao.saveNewBook(book);
 
@@ -111,3 +98,4 @@ public class BookDaoIntegrationTest {
 
     }
 }
+
